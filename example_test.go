@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/kevinburke/ssh_config"
+	"github.com/dimandzhi/ssh_config"
 )
 
 func ExampleHost_Matches() {

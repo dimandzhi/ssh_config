@@ -55,9 +55,9 @@ type configFinder func() string
 type UserSettings struct {
 	IgnoreErrors       bool
 	systemConfig       *Config
-	systemConfigFinder configFinder
+	SystemConfigFinder configFinder
 	userConfig         *Config
-	userConfigFinder   configFinder
+	UserConfigFinder   configFinder
 	loadConfigs        sync.Once
 	onceErr            error
 }
@@ -71,7 +71,7 @@ func homedir() string {
 	}
 }
 
-func userConfigFinder() string {
+func UserConfigFinder() string {
 	return filepath.Join(homedir(), ".ssh", "config")
 }
 
@@ -80,11 +80,11 @@ func userConfigFinder() string {
 // and it will return parse errors (if any) instead of swallowing them.
 var DefaultUserSettings = &UserSettings{
 	IgnoreErrors:       false,
-	systemConfigFinder: systemConfigFinder,
-	userConfigFinder:   userConfigFinder,
+	SystemConfigFinder: SystemConfigFinder,
+	UserConfigFinder:   UserConfigFinder,
 }
 
-func systemConfigFinder() string {
+func SystemConfigFinder() string {
 	return filepath.Join("/", "etc", "ssh", "ssh_config")
 }
 
@@ -152,10 +152,10 @@ func (u *UserSettings) GetStrict(alias, key string) (string, error) {
 	u.loadConfigs.Do(func() {
 		// can't parse user file, that's ok.
 		var filename string
-		if u.userConfigFinder == nil {
-			filename = userConfigFinder()
+		if u.UserConfigFinder == nil {
+			filename = UserConfigFinder()
 		} else {
-			filename = u.userConfigFinder()
+			filename = u.UserConfigFinder()
 		}
 		var err error
 		u.userConfig, err = parseFile(filename)
@@ -164,10 +164,10 @@ func (u *UserSettings) GetStrict(alias, key string) (string, error) {
 			u.onceErr = err
 			return
 		}
-		if u.systemConfigFinder == nil {
-			filename = systemConfigFinder()
+		if u.SystemConfigFinder == nil {
+			filename = SystemConfigFinder()
 		} else {
-			filename = u.systemConfigFinder()
+			filename = u.SystemConfigFinder()
 		}
 		u.systemConfig, err = parseFile(filename)
 		//lint:ignore S1002 I prefer it this way
@@ -638,7 +638,7 @@ func init() {
 func newConfig() *Config {
 	return &Config{
 		Hosts: []*Host{
-			&Host{
+			{
 				implicit: true,
 				Patterns: []*Pattern{matchAll},
 				Nodes:    make([]Node, 0),
