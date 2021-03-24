@@ -8,6 +8,9 @@ RUN apk add --no-cache \
         bash-completion \
         git-bash-completion \
         sudo
+    && mkdir -p /etc/skel \
+    && touch /etc/skel/.bashrc \
+    && echo "source /usr/share/bash-completion/completions/git" >> /etc/skel/.bashrc
 
 ARG USERNAME
 ARG USER_ID
@@ -19,4 +22,6 @@ RUN addgroup -g ${GROUP_ID} ${USERNAME} \
     && chmod 0440 /etc/sudoers.d/${USERNAME} \
     && cd /home/${USERNAME} \
     && mkdir -p -m0755 src \
-    && chown -R ${USER_ID}:${GROUP_ID} src
+    && echo "export PATH=\${HOME}/bin:\${PATH}" > .bashrc \
+    && chown -R ${USER_ID}:${GROUP_ID} src .bashrc \
+    && install -m 644 /dev/null .gitconfig

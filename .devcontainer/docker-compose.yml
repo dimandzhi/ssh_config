@@ -45,5 +45,4 @@ services:
     command: /bin/sh -c "while sleep 1000; do :; done"
     environment:
       GOFLAGS: -mod=vendor
-      GOPRIVATE: wiki.leta.lv
       GOPATH: ${HOME}
